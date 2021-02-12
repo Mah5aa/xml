@@ -1,0 +1,107 @@
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:element name="bank" type="bank_type">
+    
+    <xsd:key name="account_id">     
+      <xsd:selector xpath="accounts/savings_accounts/savings_account | accounts/checking_accounts/checking_account"/>
+      <xsd:field xpath="@id"/>
+    </xsd:key>
+
+    <xsd:key name="customer_id">
+      <xsd:selector xpath="customers/customer"/>
+      <xsd:field xpath="@id"/>
+    </xsd:key>
+  
+    <xsd:keyref name="customer_ref" refer="customer_id">
+       <xsd:selector xpath="customer_accounts/customer_account"/>
+       <xsd:field xpath="@customer_id"/>
+    </xsd:keyref>   
+  
+    <xsd:keyref name="account_ref" refer="account_id">
+       <xsd:selector xpath="customer_accounts/customer_account"/>
+       <xsd:field xpath="@account_id"/>
+    </xsd:keyref>
+          
+  </xsd:element>
+  
+  <xsd:complexType name="bank_type">
+    <xsd:sequence>
+      <xsd:element name="accounts" type="accounts_type"/>
+      <xsd:element name="customers" type="customers_type"/>
+      <xsd:element name="customer_accounts" type="customer_accounts_type"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="accounts_type">
+    <xsd:sequence>
+      <xsd:element name="savings_accounts" type="savings_accounts_type"/>
+      <xsd:element name="checking_accounts" type="checking_accounts_type"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="customers_type">
+    <xsd:sequence>
+      <xsd:element name="customer" type="customer_type" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="customer_accounts_type">
+    <xsd:sequence>
+      <xsd:element name="customer_account" type="customer_account_type" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="savings_accounts_type">
+    <xsd:sequence>
+      <xsd:element name="savings_account" type="savings_account_type" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="checking_accounts_type">
+    <xsd:sequence>
+      <xsd:element name="checking_account" type="checking_account_type" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="basic_account_type">
+    <xsd:sequence>
+      <xsd:element name="balance" type="balance_type"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="balance_type">
+    <xsd:restriction base="xsd:decimal">
+      <xsd:minExclusive value="-5000"/>
+    </xsd:restriction>
+  </xsd:simpleType >   
+  
+  <xsd:complexType name="savings_account_type">
+   <xsd:complexContent>
+     <xsd:extension base="basic_account_type">
+       <xsd:attribute name="interest" type="xsd:decimal" use="required"/>
+     </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="checking_account_type">
+   <xsd:complexContent>
+     <xsd:extension base="basic_account_type">
+     </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="customer_type">
+    <xsd:sequence>
+      <xsd:element name="name" type="xsd:string"/>
+      <xsd:element name="address" type="xsd:string"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="customer_account_type">
+    <xsd:attribute name="customer_id" type="xsd:string" use="required"/>
+    <xsd:attribute name="account_id" type="xsd:string" use="required"/>
+  </xsd:complexType>
+    
+</xsd:schema>
